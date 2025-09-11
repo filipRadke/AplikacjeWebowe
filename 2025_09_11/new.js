@@ -1,6 +1,6 @@
 let cPrime = 0;
 let cEven = 0;
-let n;
+let prompt = "How many numbers? ";
 
 const readline = require('node:readline');
 
@@ -9,14 +9,17 @@ const rl = readline.createInterface({
     output: process.stdout,
 });
 
-rl.question(`How many numbers? `, num => {
-    n = num;
+rl.setPrompt(prompt);
+rl.prompt();
 
-    if (isNaN(n)) {
-        console.log("Pleas input a number");
+rl.on("line", function (input) {
+    if (isNaN(input)) 
+    {
+        console.log("Pleas input a number")
+        rl.prompt();
     }
     else {
-        for (let i = 1; i <= n; i++) {
+        for (let i = 1; i <= input; i++) {
             if (isPrime(i)) {
                 cPrime++;
             }
@@ -25,12 +28,12 @@ rl.question(`How many numbers? `, num => {
             }
         }
 
-        console.log("In range of 1 - " + n);
-        console.log("Number of primes: " + cPrime);
-        console.log("Number of evens: " + cEven);
+        console.log("In range of 1 - " + input);
+        console.log("Number of prime numbers: " + cPrime);
+        console.log("Number of even numbers: " + cEven);
+        rl.close()
     }
-    rl.close();
-});
+})
 
 function isPrime(a) {
     for (let i = 2; i < a; i++) {
