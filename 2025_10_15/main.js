@@ -46,8 +46,9 @@ app.get('/getParams', async (req, res) => {
 })
 
 app.use(express.static(__dirname + "/assets"), (req, res) =>{
-  res.status(404)
-  res.json({
+  res
+  .status(404)
+  .json({
     status: "fileNotFound"
   })
 })
