@@ -94,10 +94,14 @@ app.get('/api/contact-messages/:id', async (req, res) => {
             [req.params.id]
         );
 
+        if(results.length === 0){
+            res.status(404).json({status:"id not found"})
+            return
+        }
+
         res.json(results);
     } catch (err) {
         console.log(err);
-        res.status(404)
     }
 })
 
