@@ -29,7 +29,7 @@ postRouter.post('/create', async (req, res, next) => {
         next()
     }
     catch (error) {
-        res.status(404).json({ error: error })
+        next(error)
     }
 })
 
@@ -80,7 +80,7 @@ postRouter.put('/update', async (req, res, next) => {
         next()
     }
     catch (error) {
-        res.status(404).json({ error: error });
+        next(error)
     }
 })
 
@@ -108,10 +108,8 @@ postRouter.delete('/delete', async (req, res, next) => {
         next()
     }
     catch (error) {
-        res.status(404).json({ error: error });
+        next(error)
     }
 })
-
-await prisma.$disconnect()
 
 export{postRouter}

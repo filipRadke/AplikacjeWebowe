@@ -5,15 +5,21 @@ import { prisma } from "../../lib/prisma"
 commentRouter.post('/create', async (req, res, next) => {
     const { content, postId } = req.body
 
-    const newComment = await prisma.comment.create({
-        data: {
-            content: content,
-            postId: postId,
-        }
-    })
+    try
+    {
+        const newComment = await prisma.comment.create({
+            data: {
+                content: content,
+                postId: postId,
+            }
+        })
 
-    res.json(newComment)
-    next()
+        res.json(newComment)
+        next()
+    }
+    catch (error) {
+        next(error)
+    }
 })
 
 commentRouter.get('/read', async (req, res, next) => {
@@ -61,7 +67,7 @@ commentRouter.put('/update', async (req, res, next) => {
         next()
     }
     catch(error) {
-        return res.status(404).json({ error: error });
+        next(error)
     }
 })
 
@@ -80,7 +86,7 @@ commentRouter.delete('/delete', async (req, res, next) => {
         next()
     }
     catch (error) {
-        res.status(404).json({ error: error });
+        next(error)
     }
 })
 

@@ -4,13 +4,20 @@ import { prisma } from "../../lib/prisma"
 
 categoryRouter.post('/create', async (req, res,next) => {
     const { name } = req.body
-    const newCategory = await prisma.category.create({
-        data: {
-            name: name,
-        }
-    })
-    res.status(200).json(newCategory)
-    next()
+    try
+    {
+        const newCategory = await prisma.category.create({
+            data: {
+                name: name,
+            }
+        })
+
+        res.status(200).json(newCategory)
+        next()
+    }
+    catch (error) {
+        next(error);
+    }
 })
 
 categoryRouter.get('/read', async (req, res,next) => {
@@ -59,7 +66,7 @@ categoryRouter.put('/update', async (req, res,next) => {
         next()
     }
     catch (error) {
-        res.status(404).json({ error: error });
+        next(error)
     }
 
 })
@@ -88,7 +95,7 @@ categoryRouter.delete('/delete', async (req, res,next) => {
         next()
     }
     catch (error) {
-        res.status(404).json({ error: error });
+        next(error)
     }
 })
 
