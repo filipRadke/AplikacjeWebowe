@@ -1,9 +1,32 @@
+import { useEffect, useState } from "react"
+import type {Post} from "../../types/Post/Post.ts";
+
 import styles from './Posts.module.scss'
 import {Link} from "react-router";
-import {usePost} from "../../hooks/usePost.ts";
 
 export default function Posts() {
-  const {data: posts, isLoading, isError} = usePost()
+  // const [posts, setPosts] = useState<Array<Post>>([])
+  const [posts, setPosts] = useState<Post[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [isError, setIsError] = useState(false)
+
+  useEffect(() => {
+    (() => {
+      setIsLoading(true)
+    })()
+    fetch('https://jsonplaceholder.typicode.com/posts')
+      .then(response => response.json())
+      .then((json: Post[]) => {
+        setPosts(json)
+      })
+      .catch(() => {
+        setIsError(true)
+      })
+      .finally(() => {
+        setIsLoading(false)
+        // setPosts([])
+      })
+  }, []);
 
   return (
     <div className={styles.Posts}>
@@ -21,7 +44,7 @@ export default function Posts() {
           Wystąpił nieoczekiwany błąd 😭
         </div>
       )}
-      {!isLoading && !isError && posts && (
+      {!isLoading && !isError && (
         <>
           {posts.length === 0 && (
             <div className={styles.PostsError}>

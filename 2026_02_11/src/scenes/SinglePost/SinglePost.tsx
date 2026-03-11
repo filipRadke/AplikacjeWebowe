@@ -1,14 +1,57 @@
+import { useEffect, useState } from "react"
+import type {Post} from "../../types/Post/Post.ts";
+import type {Comment} from "../../types/Comment/Comment.ts";
+import type {User} from "../../types/User/User.ts";
+
 import styles from './SinglePost.module.scss'
-import UserInfo from "../../components/UserInfo/UserInfo.tsx";
-import {useSinglePost} from "../../hooks/usePost.ts";
-import {useComments} from "../../hooks/useComments.ts";
 import {useParams} from "react-router";
 
 export default function SinglePost() {
-    const params = useParams();
-    const postId = +(params.id || 0);
-    const {data: post, isLoading, isError} = useSinglePost(postId);
-    const {data: comments} = useComments(postId);
+  const [post, setPost] = useState<Post>()
+  const [user, setUser] = useState<User>()
+  const [comments, setComments] = useState<Comment[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [isError, setIsError] = useState(false)
+  const id = useParams().id
+  let uid:number
+
+  useEffect(() => {
+    (() => {
+      setIsLoading(true)
+    })()
+    fetch('https://jsonplaceholder.typicode.com/posts/' + id)
+      .then(response => response.json())
+      .then((json: Post) => {
+        setPost(json)
+        console.log(json)
+        uid = json.userId
+      })
+      .then(() => {
+        fetch('https://jsonplaceholder.typicode.com/users/' + uid)
+            .then(response => response.json())
+            .then((json: User) => {
+              setUser(json)
+            })
+            .catch(() => {
+              setIsError(true)
+            })
+            .finally(() => {
+              setIsLoading(false)
+            })
+      })
+
+    fetch('https://jsonplaceholder.typicode.com/posts/' + id + '/comments')
+      .then(response => response.json())
+        .then((json: Comment[])=> {
+          setComments(json)
+        })
+        .catch(() => {
+          setIsError(true)
+        })
+        .finally(() => {
+          setIsLoading(false)
+        })
+  }, []);
 
 
   return (
@@ -27,7 +70,7 @@ export default function SinglePost() {
           Wystąpił nieoczekiwany błąd 😭
         </div>
       )}
-      {!isLoading && !isError && comments && (
+      {!isLoading && !isError && (
         <>
           {post === undefined && (
             <div className={styles.PostsError}>
@@ -37,7 +80,7 @@ export default function SinglePost() {
           {post !== undefined && (
             <div className={styles.PostsPost} key={post.id}>
               <p className={styles.PostsPostUser}>
-                <UserInfo id={post.userId}/>
+                {user?.username}
               </p>
               <h5 className={styles.PostsPostTitle}>
                 {post.title}
